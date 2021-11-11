@@ -9,7 +9,7 @@ namespace LibraryList.Models
     {
         public T[] list;
         private static int _count;
-        private int _capacity = 4;
+        private int _capacity;
         public int Capacity
         {
             get
@@ -69,7 +69,6 @@ namespace LibraryList.Models
                     index = i;
                 }
             }
-
             for (int i = index; i < list.Length; i++)
             {
                 if (i + 1 < list.Length)
@@ -98,8 +97,6 @@ namespace LibraryList.Models
                     list[index] = a;
                 }
             }
-            Array.Resize(ref list, list.Length - 1);
-
         }
 
         /// <summary>
