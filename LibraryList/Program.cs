@@ -19,11 +19,17 @@ namespace LibraryList
             ct.Add(37);
             ct.Add(30);
             ct.Add(10);
-
-            foreach (var item in ct)
-            {
-                Console.WriteLine(item);
-            }
+            //Custom list remove
+            ct.Remove(25);
+            //Custom list remove at
+            ct.RemoveAt(3);
+            //foreach (var item in ct)
+            //{
+            //    Console.WriteLine(item);
+            //}
+            //CustomList Find
+            int result = ct.CustomFind(n => n % 2 == 0);
+            //Console.WriteLine(result);
 
             //CustomList<int> list = ct.CustomFindAll(x => x == 10);
             //foreach (var item in list)
@@ -31,8 +37,6 @@ namespace LibraryList
             //    Console.WriteLine(item);
             //}
 
-            //Predicate<int> Sum = n => n % 2   == 0;
-            //Console.WriteLine(Sum(1));
         }
     }
 }
