@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using CustomExceptions.Exceptions;
 
-
 namespace LibraryList.Models
 {
-    public class CustomList<T>
+    public class CustomList<T> : IEnumerable<T>
     {
         public T[] list;
         private static int _count;
-        private int _capacity;
+        private int _capacity = 4;
         public int Capacity
         {
             get
@@ -27,15 +26,10 @@ namespace LibraryList.Models
             }
         }
 
-        static CustomList()
-        {
-            _count = 0;
-        }
-
         public CustomList()
         {
 
-            list = new T[_count];
+            list = new T[0];
         }
 
         public CustomList(int capacity)
@@ -53,7 +47,11 @@ namespace LibraryList.Models
             Array.Resize(ref list, list.Length + 1);
             list[^1] = item;
             _count++;
-
+            if (_count == _capacity)
+            {
+                _capacity *= 2;
+                Array.Resize(ref list, _capacity);
+            }
         }
 
         /// <summary>
@@ -61,22 +59,25 @@ namespace LibraryList.Models
         /// </summary>
         /// <param name="items">Enter the item you want to delete</param>
         /// <returns>If it finds the item, it deletes it and returns <b>true</b>, if it does not find it, it return <b>false</b> </returns>
-        public bool Remove(T items)
+        public void Remove(T items)
         {
+            int index = 0;
             for (int i = 0; i < list.Length; i++)
             {
-                for (int z = 0; z < list.Length - i - 1; z++)
+                if (list[i].Equals(items))
                 {
-                    if (list[i].Equals(items))
-                    {
-                        T a = list[z + 1];
-                        list[i] = a;
-                        Array.Resize(ref list, list.Length - 1);
-                        return true;
-                    }
+                    index = i;
                 }
             }
-            return false;
+
+            for (int i = index; i < list.Length; i++)
+            {
+                if (i + 1 < list.Length)
+                {
+                    list[i] = list[i + 1];
+                }
+            }
+            Array.Resize(ref list, list.Length - 1);
         }
 
         /// <summary>
@@ -97,6 +98,8 @@ namespace LibraryList.Models
                     list[index] = a;
                 }
             }
+            Array.Resize(ref list, list.Length - 1);
+
         }
 
         /// <summary>
@@ -183,7 +186,6 @@ namespace LibraryList.Models
             set
             {
                 list[index] = value;
-                return;
             }
         }
 
@@ -202,6 +204,60 @@ namespace LibraryList.Models
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Retrieves all the elements that match the conditions defined by the specified predicate.
+        /// </summary>
+        /// <param name="match">Delegate that defines the conditions of the elements tosearch for.</param>
+        /// <returns>Containing all the elements that match the
+        //conditions defined by the specified predicate, if found; otherwise, an empty</returns>
+        public T CustomFind(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new Exception();
+            }
+
+            for (int i = 0; i < list.Length; i++)
+            {
+                if (match(list[i]))
+                {
+                    return list[i];
+                }
+            }
+            return default(T);
+        }
+
+        /// <summary>
+        /// Retrieves all the elements that match the conditions defined by the specified predicate.
+        /// </summary>
+        /// <param name="match">Delegate that defines the conditions of the elements tosearch for</param>
+        /// <returns>CustomList<T></returns>
+        public CustomList<T> CustomFindAll(Predicate<T> match)
+        {
+
+            CustomList<T> listAd = new CustomList<T>();
+            for (int i = 0; i < list.Length; i++)
+            {
+                if (match(list[i]))
+                {
+                    listAd.Add(list[i]);
+                }
+            }
+            return listAd;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            foreach (T elm in list)
+            {
+                yield return elm;
+            }
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return list.GetEnumerator();
         }
     }
 }
